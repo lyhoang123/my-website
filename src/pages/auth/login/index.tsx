@@ -21,6 +21,7 @@ import Logo from "components/logo";
 import SocialLogin from "components/socialLogin";
 import { logInWithEmailAndPassword } from "firebases";
 import { useFormik } from "formik";
+import React from "react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
@@ -52,9 +53,10 @@ export default function Login(props: LoginProps) {
     navigate("/register");
   };
 
-  
-
   const { isOpen, onToggle } = useDisclosure();
+
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const onClickReveal = () => {
     onToggle();
   };
@@ -62,8 +64,10 @@ export default function Login(props: LoginProps) {
   const formHandlers = useFormik<LoginFormValues>({
     initialValues: initialValues,
     validationSchema: LoginFormValidation,
-    onSubmit: ({ email, password }) => {
-      logInWithEmailAndPassword(email, password);
+    onSubmit: async ({ email, password }) => {
+      setIsLoading(true);
+      const login = await logInWithEmailAndPassword(email, password);
+      if (login) setIsLoading(false);
     },
   });
 
@@ -149,9 +153,18 @@ export default function Login(props: LoginProps) {
               Forgot password?
             </Button>
           </HStack>
-          <Button type="submit" colorScheme="blue" variant="outline">
-            Sign in
-          </Button>
+          {isLoading ? (
+            <Button
+              isLoading
+              loadingText="Logging in"
+              colorScheme="blue"
+              variant="outline"
+            ></Button>
+          ) : (
+            <Button type="submit" colorScheme="blue" variant="outline">
+              Sign in
+            </Button>
+          )}
         </Stack>
       </form>
 

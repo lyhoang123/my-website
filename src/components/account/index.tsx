@@ -9,8 +9,20 @@ import {
   MenuList,
 } from "@chakra-ui/react";
 import * as React from "react";
+import { getAuth, signOut } from "firebase/auth";
 
 export default function Account() {
+  const handleSignOut = () => {
+    const auth = getAuth();
+    signOut(auth)
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <>
       <Menu>
@@ -42,7 +54,7 @@ export default function Account() {
           <MenuDivider />
           <MenuItem>Your Servers</MenuItem>
           <MenuItem>Account Settings</MenuItem>
-          <MenuItem>Logout</MenuItem>
+          <MenuItem onClick={handleSignOut}>Logout</MenuItem>
         </MenuList>
       </Menu>
     </>
